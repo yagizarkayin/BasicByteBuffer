@@ -76,7 +76,7 @@ int main()
 
 	BasicByteReader reader(result.data(), result.size());
 
-	Vec3* in_singlePoint;
+	Vec3 in_singlePoint;
 	double in_doubleValue;
 	Color in_myColor;
 	VeryLargeClass* in_myVeryLargeClassInstance;

@@ -51,6 +51,7 @@ public:
 
 	}
 
+	// Use this one for rather small objects, stuff that you don't mind initializing first, like primitive types
 	template<typename T>
 	inline bool read(T& value)
 	{
@@ -59,13 +60,14 @@ public:
 		{
 			return false;
 		}
-		// cast byte* to T*, dereference it, move the return value to the parameter value
-		value = std::move(*(reinterpret_cast<T*>(buffer)));
+		// cast byte* to T*, dereference it, copy it to the value
+		value = *(reinterpret_cast<T*>(buffer));
 		bytesRemaining -= dataSize;
 		buffer += dataSize;
 		return true;
 	}
 
+	// Use this one for large objects, stuff that you will initialize with the data that comes from buffer
 	template<typename T>
 	inline bool read(T*& value)
 	{
@@ -74,7 +76,7 @@ public:
 		{
 			return false;
 		}
-		// cast byte* to T*, dereference it, move the return value to the parameter value
+		// cast byte* to T*, call the move assignment
 		value = std::move(reinterpret_cast<T*>(buffer));
 		bytesRemaining -= dataSize;
 		buffer += dataSize;
