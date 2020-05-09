@@ -44,7 +44,7 @@ public:
 
 	void printAll()
 	{
-		for (Vec3 mesh : meshPoints)
+		for (auto& mesh : meshPoints)
 		{
 			mesh.print();
 		}
