@@ -7,7 +7,7 @@ typedef unsigned char byte;
 // CPU cache size for most of the architectures
 static constexpr int initialSize = 64;
 
-// WARNING: Use these classes only when sizeof macro returns the correct size
+// WARNING: Use these classes only when 'sizeof' macro returns the correct size
 
 class BasicByteWriter
 {
