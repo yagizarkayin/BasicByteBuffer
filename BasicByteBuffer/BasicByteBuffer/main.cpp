@@ -22,12 +22,13 @@ enum Color
 };
 
 
-
+// WARNING: Since you have to initialize your data first, and then read the value into it, 
+//			it is not recommended to use it with large classes such as this one.
+//			It is only for demonstration purposes
 class VeryLargeClass
 {
 public:
-	VeryLargeClass() :
-		meshPoints(256)
+	VeryLargeClass()
 	{ 
 		std::cout << "This is a very large class" << std::endl;
 	}
@@ -51,7 +52,7 @@ public:
 	}
 
 private:
-	std::vector<Vec3> meshPoints;
+	Vec3 meshPoints[256];
 };
 
 int main()
@@ -72,21 +73,21 @@ int main()
 	writer.write(out_myColor);
 	writer.write(out_myVeryLargeClassInstance);
 
-	const auto result = std::move(writer.getDataAndResetBuffer());
+	const std::vector<byte> result = writer.getDataAndResetBuffer();
 
-	BasicByteReader reader(result.data(), result.size());
+	BasicByteReader reader(const_cast<byte*>(result.data()), result.size());
 
 	Vec3 in_singlePoint;
 	double in_doubleValue;
 	Color in_myColor;
-	VeryLargeClass* in_myVeryLargeClassInstance;
+	VeryLargeClass in_myVeryLargeClassInstance;
 
 	reader.read(in_singlePoint);
 	reader.read(in_doubleValue);
 	reader.read(in_myColor);
 	reader.read(in_myVeryLargeClassInstance);
 
-	in_myVeryLargeClassInstance->printAll();
+	in_myVeryLargeClassInstance.printAll();
 
 	std::cin.get();
 	return 0;

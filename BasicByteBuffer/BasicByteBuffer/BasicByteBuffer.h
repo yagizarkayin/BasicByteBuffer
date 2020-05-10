@@ -5,7 +5,9 @@
 typedef unsigned char byte;
 
 // CPU cache size for most of the architectures
-static const int initialSize = 64;
+static constexpr int initialSize = 64;
+
+// WARNING: Use these classes only when sizeof macro returns the correct size
 
 class BasicByteWriter
 {
@@ -41,17 +43,20 @@ private:
 	std::vector<byte> buffer;
 };
 
+// WARNING: Since you have to initialize your data first, and then read the value into it, 
+//			it is not recommended to use this class when reading data to create large classes, 
+//			altough there is an example in main.cpp
+
 class BasicByteReader
 {
 public:
-	BasicByteReader(const byte* data, const size_t size)
-		: buffer(const_cast<byte*>(data))
+	BasicByteReader(byte* data, const size_t size)
+		: buffer(data)
 		, bytesRemaining(size)
 	{
 
 	}
 
-	// Use this one for rather small objects, stuff that you don't mind initializing first, like primitive types
 	template<typename T>
 	inline bool read(T& value)
 	{
@@ -60,29 +65,12 @@ public:
 		{
 			return false;
 		}
-		// cast byte* to T*, dereference it, copy it to the value
+		// cast byte* to T*, dereference it, copy/move it to the value
 		value = *(reinterpret_cast<T*>(buffer));
 		bytesRemaining -= dataSize;
 		buffer += dataSize;
 		return true;
 	}
-
-	// Use this one for large objects, stuff that you will initialize with the data that comes from buffer
-	template<typename T>
-	inline bool read(T*& value)
-	{
-		const auto dataSize = sizeof(T);
-		if (dataSize > bytesRemaining)
-		{
-			return false;
-		}
-		// cast byte* to T*, call the move assignment
-		value = std::move(reinterpret_cast<T*>(buffer));
-		bytesRemaining -= dataSize;
-		buffer += dataSize;
-		return true;
-	}
-
 private:
 	byte* buffer;
 	size_t bytesRemaining;
